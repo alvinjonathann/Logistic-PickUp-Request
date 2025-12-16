@@ -15,12 +15,13 @@ class Appointment extends Model
         'item_type',
         'quantity',
         'volume',
-        'scheduled_at',
+        'pickup_date',
+        'pickup_time',
         'status'
     ];
 
     protected $casts = [
-        'scheduled_at' => 'datetime'
+        'pickup_date' => 'date'
     ];
 
     protected static function boot()

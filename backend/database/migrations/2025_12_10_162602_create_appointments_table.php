@@ -19,9 +19,9 @@ class CreateAppointmentsTable extends Migration
             $table->string('item_type');
             $table->integer('quantity');
             $table->float('volume');
-            $table->date('date');
-            $table->time('time');
-            $table->string('status')->default('ongoing');
+            $table->date('pickup_date');
+            $table->time('pickup_time');
+            $table->enum('status', ['ongoing', 'completed', 'cancelled'])->default('ongoing');
             $table->timestamps();
         });
     }

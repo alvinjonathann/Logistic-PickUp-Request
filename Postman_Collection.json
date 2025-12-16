@@ -1,0 +1,713 @@
+{
+  "info": {
+    "_postman_id": "aol-logistics-api",
+    "name": "AoL Logistics - Appointment API",
+    "description": "Complete API testing for AoL Logistics Appointment System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "register"]
+            },
+            "description": "Register a new user account"
+          }
+        },
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["if (pm.response.code === 200) {", "  var jsonData = pm.response.json();", "  pm.environment.set('token', jsonData.token);", "  console.log('Token saved: ' + jsonData.token);", "}"]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "login"]
+            },
+            "description": "Login and get authentication token"
+          }
+        },
+        {
+          "name": "Logout User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "logout"]
+            },
+            "description": "Logout and invalidate token"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Appointments - CREATE",
+      "item": [
+        {
+          "name": "Create Appointment - Basic",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.environment.set('appointment_id', jsonData.id);",
+                  "  pm.test('Appointment created successfully', function() {",
+                  "    pm.expect(pm.response.code).to.equal(201);",
+                  "    pm.expect(jsonData.status).to.equal('ongoing');",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_type\": \"Elektronik\",\n  \"quantity\": 5,\n  \"volume\": 2.5,\n  \"pickup_date\": \"{{pickup_date}}\",\n  \"pickup_time\": \"14:30\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/appointments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments"]
+            },
+            "description": "Create a new appointment request"
+          }
+        },
+        {
+          "name": "Create Appointment - Pakaian",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_type\": \"Pakaian\",\n  \"quantity\": 10,\n  \"volume\": 1.5,\n  \"pickup_date\": \"{{pickup_date}}\",\n  \"pickup_time\": \"10:00\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/appointments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments"]
+            },
+            "description": "Create appointment for clothing items"
+          }
+        },
+        {
+          "name": "Create Appointment - Peralatan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_type\": \"Peralatan\",\n  \"quantity\": 3,\n  \"volume\": 5.0,\n  \"pickup_date\": \"{{pickup_date}}\",\n  \"pickup_time\": \"16:00\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/appointments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments"]
+            },
+            "description": "Create appointment for equipment items"
+          }
+        },
+        {
+          "name": "Create Appointment - Invalid Date (Past)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_type\": \"Test\",\n  \"quantity\": 1,\n  \"volume\": 0.5,\n  \"pickup_date\": \"2025-12-01\",\n  \"pickup_time\": \"14:30\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/appointments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments"]
+            },
+            "description": "Test: Try to create with past date - Should fail with 422"
+          }
+        },
+        {
+          "name": "Create Appointment - Invalid Volume",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_type\": \"Test\",\n  \"quantity\": 1,\n  \"volume\": 0.05,\n  \"pickup_date\": \"{{pickup_date}}\",\n  \"pickup_time\": \"14:30\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/appointments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments"]
+            },
+            "description": "Test: Try with volume < 0.1 - Should fail with 422"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Appointments - READ",
+      "item": [
+        {
+          "name": "Get All Appointments (Ongoing)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/appointments?filter=ongoing",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments"],
+              "query": [
+                {
+                  "key": "filter",
+                  "value": "ongoing"
+                }
+              ]
+            },
+            "description": "Get all ongoing appointments for current user"
+          }
+        },
+        {
+          "name": "Get All Appointments (History)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/appointments?filter=history",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments"],
+              "query": [
+                {
+                  "key": "filter",
+                  "value": "history"
+                }
+              ]
+            },
+            "description": "Get all history appointments (completed/cancelled)"
+          }
+        },
+        {
+          "name": "Get Single Appointment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/appointments/{{appointment_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments", "{{appointment_id}}"]
+            },
+            "description": "Get details of a specific appointment"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Appointments - UPDATE",
+      "item": [
+        {
+          "name": "Update - Reschedule Appointment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pickup_date\": \"2025-12-16\",\n  \"pickup_time\": \"15:30\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/appointments/{{appointment_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments", "{{appointment_id}}"]
+            },
+            "description": "Reschedule appointment - change date and time"
+          }
+        },
+        {
+          "name": "Update - Add Quantity",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 10\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/appointments/{{appointment_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments", "{{appointment_id}}"]
+            },
+            "description": "Update quantity - increase number of items"
+          }
+        },
+        {
+          "name": "Update - Change Item Type",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_type\": \"Peralatan Rumah Tangga\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/appointments/{{appointment_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments", "{{appointment_id}}"]
+            },
+            "description": "Update item type description"
+          }
+        },
+        {
+          "name": "Update - Change Volume",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"volume\": 3.5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/appointments/{{appointment_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments", "{{appointment_id}}"]
+            },
+            "description": "Update volume of appointment"
+          }
+        },
+        {
+          "name": "Update - All Fields",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_type\": \"Elektronik Besar\",\n  \"quantity\": 15,\n  \"volume\": 4.0,\n  \"pickup_date\": \"2025-12-20\",\n  \"pickup_time\": \"18:00\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/appointments/{{appointment_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments", "{{appointment_id}}"]
+            },
+            "description": "Update all fields at once"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Appointments - DELETE",
+      "item": [
+        {
+          "name": "Cancel Appointment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/appointments/{{appointment_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appointments", "{{appointment_id}}"]
+            },
+            "description": "Cancel an appointment - status changes to 'cancelled'"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Test Scenarios",
+      "item": [
+        {
+          "name": "Scenario 1: Full CRUD Flow",
+          "item": [
+            {
+              "name": "1. Register & Login",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"scenario1@example.com\",\n  \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/login",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "login"]
+                }
+              }
+            },
+            {
+              "name": "2. Create Appointment",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"item_type\": \"Test Scenario\",\n  \"quantity\": 5,\n  \"volume\": 2.0,\n  \"pickup_date\": \"{{pickup_date}}\",\n  \"pickup_time\": \"10:00\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/appointments",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "appointments"]
+                }
+              }
+            },
+            {
+              "name": "3. Read - Get Ongoing",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/appointments?filter=ongoing",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "appointments"],
+                  "query": [
+                    {
+                      "key": "filter",
+                      "value": "ongoing"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "4. Update - Reschedule",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pickup_date\": \"2025-12-18\",\n  \"pickup_time\": \"14:00\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/appointments/{{appointment_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "appointments", "{{appointment_id}}"]
+                }
+              }
+            },
+            {
+              "name": "5. Delete - Cancel Appointment",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/appointments/{{appointment_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "appointments", "{{appointment_id}}"]
+                }
+              }
+            },
+            {
+              "name": "6. Read - Get History",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/appointments?filter=history",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "appointments"],
+                  "query": [
+                    {
+                      "key": "filter",
+                      "value": "history"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Scenario 2: Multiple Appointments",
+          "item": [
+            {
+              "name": "Create Multiple - Elektronik",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"item_type\": \"Elektronik\",\n  \"quantity\": 8,\n  \"volume\": 3.0,\n  \"pickup_date\": \"{{pickup_date}}\",\n  \"pickup_time\": \"09:00\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/appointments",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "appointments"]
+                }
+              }
+            },
+            {
+              "name": "Create Multiple - Pakaian",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"item_type\": \"Pakaian\",\n  \"quantity\": 20,\n  \"volume\": 2.0,\n  \"pickup_date\": \"{{pickup_date}}\",\n  \"pickup_time\": \"11:00\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/appointments",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "appointments"]
+                }
+              }
+            },
+            {
+              "name": "Create Multiple - Peralatan",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"item_type\": \"Peralatan\",\n  \"quantity\": 5,\n  \"volume\": 6.0,\n  \"pickup_date\": \"{{pickup_date}}\",\n  \"pickup_time\": \"13:00\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/appointments",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "appointments"]
+                }
+              }
+            },
+            {
+              "name": "View All Ongoing",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/appointments?filter=ongoing",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "appointments"],
+                  "query": [
+                    {
+                      "key": "filter",
+                      "value": "ongoing"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

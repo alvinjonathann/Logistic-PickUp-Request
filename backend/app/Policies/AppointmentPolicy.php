@@ -37,14 +37,15 @@ class AppointmentPolicy
      */
     public function update(User $user, Appointment $appointment)
     {
-        return $user->id === $appointment->user_id && $appointment->status === 'scheduled';
+        return $user->id === $appointment->user_id && $appointment->status === 'ongoing';
     }
+
     /**
      * Determine whether the user can delete the model.
      */
     public function delete(User $user, Appointment $appointment)
     {
-        return $user->id === $appointment->user_id && $appointment->status === 'scheduled';
+        return $user->id === $appointment->user_id && $appointment->status === 'ongoing';
     }
 
     /**

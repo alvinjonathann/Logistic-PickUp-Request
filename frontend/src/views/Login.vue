@@ -1,20 +1,25 @@
 <template>
-  <div class="container">
-    <h2>Login</h2>
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <h2 class="title">Login</h2>
 
-    <form @submit.prevent="login">
-      <label>Email</label>
-      <input type="email" v-model="email" required />
+      <form @submit.prevent="login">
+        <label>Email</label>
+        <input type="email" v-model="email" required class="input" />
 
-      <label>Password</label>
-      <input type="password" v-model="password" required />
+        <label>Password</label>
+        <input type="password" v-model="password" required class="input" />
 
-      <button type="submit">Login</button>
-    </form>
+        <button type="submit" class="btn-primary">Login</button>
+      </form>
 
-    <p>Belum punya akun? <router-link to="/register">Register</router-link></p>
+      <p class="switch-text">
+        Belum punya akun?
+        <router-link to="/register" class="link">Daftar di sini</router-link>
+      </p>
 
-    <p style="color:red">{{ error }}</p>
+      <p class="error" v-if="error">{{ error }}</p>
+    </div>
   </div>
 </template>
 
@@ -32,7 +37,6 @@ export default {
   methods: {
     async login() {
       this.error = "";
-
       try {
         const res = await axios.post("http://localhost:8000/api/login", {
           email: this.email,
@@ -40,11 +44,10 @@ export default {
         });
 
         localStorage.setItem("token", res.data.token);
-
         axios.defaults.headers.common["Authorization"] = "Bearer " + res.data.token;
 
         this.$router.push("/dashboard");
-      } catch (err) {
+      } catch {
         this.error = "Login gagal";
       }
     },
@@ -52,15 +55,67 @@ export default {
 };
 </script>
 
-<style>
-.container {
-  width: 300px;
-  margin: 40px auto;
+<style scoped>
+.auth-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa, #e9ecef);
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
-input, button {
-  margin-bottom: 10px;
-  padding: 8px;
+
+.auth-card {
+  background: white;
+  width: 350px;
+  padding: 32px;
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  text-align: center;
+}
+
+.title {
+  margin-bottom: 24px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  text-align: left;
+  margin-top: 10px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 4px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.btn-primary {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(to right, #637aff, #8864ff);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.switch-text {
+  margin-top: 16px;
+}
+
+.link {
+  color: #5a38ff;
+  font-weight: bold;
+}
+
+.error {
+  margin-top: 12px;
+  color: red;
 }
 </style>
