@@ -32,7 +32,7 @@ class AppointmentController extends Controller
                     $q->where('pickup_date', '>', $now->format('Y-m-d'))
                       ->orWhere(function($subQ) use ($now) {
                           $subQ->where('pickup_date', '=', $now->format('Y-m-d'))
-                               ->where('pickup_time', '>', $now->format('H:i:s'));
+                               ->where('pickup_time', '>=', $now->format('H:i'));
                       });
                 })
                 ->orderBy('pickup_date')
@@ -51,7 +51,7 @@ class AppointmentController extends Controller
                                    $timeQ->where('pickup_date', '<', $now->format('Y-m-d'))
                                          ->orWhere(function($sameDay) use ($now) {
                                              $sameDay->where('pickup_date', '=', $now->format('Y-m-d'))
-                                                     ->where('pickup_time', '<=', $now->format('H:i:s'));
+                                                     ->where('pickup_time', '<', $now->format('H:i'));
                                          });
                                });
                       });

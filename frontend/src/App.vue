@@ -5,7 +5,7 @@
       <div class="nav-container">
         <div class="nav-brand">
           <div class="logo-icon">📦</div>
-          <h1 class="logo">AoL Logistics</h1>
+          <h1 class="logo">Logistic Pick-up Appointment</h1>
         </div>
 
         <div v-if="isLoggedIn" class="nav-links">

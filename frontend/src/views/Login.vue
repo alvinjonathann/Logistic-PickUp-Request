@@ -47,8 +47,8 @@ export default {
         axios.defaults.headers.common["Authorization"] = "Bearer " + res.data.token;
 
         this.$router.push("/dashboard");
-      } catch {
-        this.error = "Login gagal";
+      } catch (err) {
+        this.error = err.response?.data?.message || "Login gagal";
       }
     },
   },

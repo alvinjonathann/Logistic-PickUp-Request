@@ -13,6 +13,9 @@
         <label>Password</label>
         <input type="password" v-model="password" required class="input" />
 
+        <label>Konfirmasi Password</label>
+        <input type="password" v-model="password_confirmation" required class="input" />
+
         <button type="submit" class="btn-primary">Daftar</button>
       </form>
 
@@ -35,6 +38,7 @@ export default {
       name: "",
       email: "",
       password: "",
+      password_confirmation: "",
       error: "",
     };
   },
@@ -46,20 +50,19 @@ export default {
           name: this.name,
           email: this.email,
           password: this.password,
+          password_confirmation: this.password_confirmation,
         });
 
         // Auto-login: save token and redirect to dashboard
         if (response.data.token) {
           localStorage.setItem("token", response.data.token);
           localStorage.setItem("user", JSON.stringify(response.data.user));
-          axios.defaults.headers.common["Authorization"] = "Bearer " + response.data.token;
           this.$router.push("/dashboard");
         } else {
           this.$router.push("/login");
         }
       } catch (err) {
-        this.error = "Register gagal";
-        console.error(err);
+        this.error = err.response?.data?.message || "Register gagal";
       }
     },
   },

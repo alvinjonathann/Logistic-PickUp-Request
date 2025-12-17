@@ -22,7 +22,7 @@ class AppointmentService
                     // Atau tanggal sama tapi waktu sudah lewat
                     ->orWhere(function ($subQuery) use ($now) {
                         $subQuery->where('pickup_date', '=', $now->format('Y-m-d'))
-                            ->where('pickup_time', '<=', $now->format('H:i:s'));
+                            ->where('pickup_time', '<', $now->format('H:i'));
                     });
             })
             ->update(['status' => 'completed']);
